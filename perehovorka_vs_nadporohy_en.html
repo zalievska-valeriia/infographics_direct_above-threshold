@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negotiated procedure vs direct above-threshold procurement</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1a2e;padding:24px;font-family:Inter,Arial,sans-serif}
+.w{max-width:1000px;margin:0 auto;padding:20px;background:#1a1a2e;color:#e0e0e0}
+.hdr{font-size:15px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.4}
+.tog{display:flex;gap:8px;margin-bottom:20px;align-items:center}
+.hbox{background:rgba(252,215,0,0.12);border:1px solid rgba(252,215,0,0.4);border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:13px;line-height:1.6;color:#e0e0e0}
+.hbox b{font-size:22px;font-weight:700;color:#fcd700;margin-right:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.ctitle{font-size:11px;font-weight:600;color:#888;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.br{display:flex;align-items:flex-start;margin-bottom:7px;gap:8px}
+.num{font-size:10px;width:14px;flex-shrink:0;text-align:right;padding-top:3px}
+.bl{font-size:11px;flex-shrink:0;width:148px;text-align:left;line-height:1.4;white-space:normal;word-break:break-word}
+.bar-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.bt{width:100%;height:16px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;cursor:pointer}
+.bf{height:100%;border-radius:2px;pointer-events:none}
+.bpct{font-size:10px;font-weight:600;white-space:nowrap;min-width:36px;text-align:right;flex-shrink:0;padding-top:3px}
+.oth{margin-top:10px;padding:6px 8px;background:rgba(255,255,255,0.04);border-radius:4px}
+.othtitle{font-size:10px;color:#444}
+.disc{font-size:10px;color:#444;margin-top:18px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);line-height:1.6}@media(max-width:480px){.grid{grid-template-columns:1fr}.bl{width:110px}}
+.tip{position:fixed;background:#18063a;border:1px solid rgba(252,215,0,0.3);color:#fff;padding:5px 10px;border-radius:5px;font-size:11px;pointer-events:none;display:none;z-index:9999;white-space:nowrap}
+
+</style>
+</head>
+<body>
+<div class="w">
+<div class="hdr">Negotiated procedure vs direct above-threshold procurement</div>
+<div class="tog">
+  <button id="b-lots" onclick="sw('lots')">Number of lots</button>
+  <button id="b-sum" onclick="sw('sum')">Contract value</button>
+</div>
+<div class="hbox" id="hbox"></div>
+<div class="grid">
+  <div><div class="ctitle">Negotiated procedure</div><div id="lbars"></div></div>
+  <div><div class="ctitle">Direct above-threshold (Special regime)</div><div id="rbars"></div></div>
+</div>
+<div class="disc">Data on negotiated procedures for 2020/07/30–2021/09/30 from BI Prozorro; data on direct above-threshold procurements for 2024/07/30–2025/09/30 from Prozorro and BI Prozorro</div>
+<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);">
+  <img src="data:image/png;base64,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" style="max-width:100%;height:auto;opacity:0.85;" alt="logos">
+</div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+var mode='lots';
+var BBASE='padding:5px 16px;font-size:12px;font-family:Inter,Arial,sans-serif;border-radius:5px;cursor:pointer;border:none;font-weight:600;';
+var BOFF=BBASE+'background:rgba(255,255,255,0.08);color:#888;';
+var BON=BBASE+'background:#e45266;color:#fff;';
+
+var SC={
+  tech:'#e45266', cancel:'#2db226', works:'#fcad10', goods:'#9b7fc7',
+  ip:'#4aafde', supplier:'#f07840', urgent:'#1ec8b0', arch:'#e060b0',
+  art:'#7ec850', legal:'#f0a030'
+};
+var UNIQUE_COLOR='rgba(255,255,255,0.18)';
+
+var L=[
+  {n:'Lack of competition for technical reasons',                             lots:52247,  sum:51787358803.94,  key:'tech'},
+  {n:'Canceled tender (no bids received)',                                lots:30144,  sum:21387458032.53,  key:'cancel'},
+  {n:'Reason not specified',                                                      lots:6694,   sum:2871428.98,      key:null},
+  {n:'Urgent need',                                                         lots:3908,   sum:6005437706.35,   key:'urgent'},
+  {n:'Additional works/services (same supplier)',                           lots:2490,   sum:15587717074.72,  key:'works'},
+  {n:'Need to protect intellectual property rights',                     lots:2252,   sum:2621277222.16,   key:'ip'},
+  {n:'Supplier of last resort or universal service',                   lots:1288,   sum:1083651155.98,   key:'supplier'},
+  {n:'Additional volume of goods (same supplier)',                           lots:737,    sum:595488550.22,    key:'goods'},
+  {n:'Winner of architectural/artistic competition',                                         lots:424,    sum:1201706799.93,   key:'arch'},
+  {n:'Purchase of works of art',                                               lots:256,    sum:160237137.21,    key:'art'},
+  {n:'Legal services procurement',                                               lots:74,     sum:1294768318.34,   key:'legal'},
+];
+var Loth={lots:37, sum:12569835.23};
+
+var R=[
+  {n:'Lack of competition for technical reasons',                               lots:76747,  sum:76564895411.44,   key:'tech'},
+  {n:'Canceled tender (no bids received)',                                  lots:47078,  sum:25593012515.28,   key:'cancel'},
+  {n:'Urgent need',                                                           lots:40373,  sum:30332151119.88,   key:'urgent'},
+  {n:'Legal advocacy services',                                                     lots:36487,  sum:586054590.70,     key:null},
+  {n:'Supplier of last resort or universal service',                     lots:10261,  sum:7962241936.45,    key:'supplier'},
+  {n:'Urgent needs / Armed Forces procurement',                                          lots:10220,  sum:11508123590.85,   key:null},
+  {n:'Contracting authority in active combat zone',                                               lots:9811,   sum:5341885534.25,    key:null},
+  {n:'Natural gas procurement by entity with special obligations',   lots:733,    sum:174032234190.16,  key:null},
+  {n:'Protection and restoration of energy infrastructure',                                     lots:2617,   sum:32653011349.13,   key:null},
+  {n:'Energy generation equipment',                                           lots:2257,   sum:12695404607.61,   key:null},
+  {n:'Additional works/services (same supplier)',                             lots:4134,   sum:10742121903.72,   key:'works'},
+  {n:'Additional volume of goods (same supplier)',                             lots:1575,   sum:919492025.88,     key:'goods'},
+  {n:'Need to protect intellectual property rights',                       lots:4003,   sum:6437874785.84,    key:'ip'},
+  {n:'Winner of architectural/artistic competition',                                           lots:264,    sum:1139033864.84,    key:'arch'},
+  {n:'Purchase of works of art',                                                 lots:1022,   sum:97362680.95,      key:'art'},
+  {n:'Legal services procurement',                                                 lots:54,     sum:427232077.04,     key:'legal'},
+];
+var Roth={
+  lots:811+5856+1070+333+165+534+133+516+29+6+1+1,
+  sum:3010395924.75+1047043053.52+344455862.40+125613661.55+75920464.63+59092794.52+31060929.25+16509309.15+3945361.54+287580.80+57663.68+40000
+};
+
+function gv(o){
+  if(mode==='lots') return o.lots;
+  return o.sum!=null?o.sum:0;
+}
+function sumArr(a){return a.reduce(function(s,i){return s+gv(i);},0);}
+function pct(v,t){return v/t*100;}
+function fmt1(v){return v.toFixed(1)+'%';}
+function fmt2(v){return v.toFixed(2)+'%';}
+function fmtVal(v){
+  if(mode==='lots') return v.toLocaleString('en-US')+' lots';
+  if(v>=1e9) return 'UAH '+(v/1e9).toFixed(1)+' bln';
+  if(v>=1e6) return 'UAH '+(v/1e6).toFixed(1)+' mln';
+  return 'UAH '+v.toLocaleString('en-US');
+}
+
+var tip=document.getElementById('tip');
+document.addEventListener('mousemove',function(e){
+  tip.style.left=(e.clientX+12)+'px';
+  tip.style.top=(e.clientY-28)+'px';
+});
+
+function drawBars(cid,main,oth,lothDecimal2){
+  var filtered=main.filter(function(o){return gv(o)>0;});
+  var sorted=filtered.slice().sort(function(a,b){return gv(b)-gv(a);});
+  var othVal=mode==='lots'?oth.lots:oth.sum;
+  var total=sumArr(filtered)+othVal;
+  var maxVal=gv(sorted[0]);
+  var html='';
+  sorted.forEach(function(item,idx){
+    var val=gv(item);
+    var p=pct(val,total);
+    var barW=maxVal>0?Math.round(val/maxVal*100):0;
+    var isUnique=!item.key;
+    var color=item.key?SC[item.key]:UNIQUE_COLOR;
+    var labelColor=isUnique?'#555':'#ccc';
+    var pctColor=isUnique?'#444':SC[item.key];
+    html+='<div class="br">';
+    html+='<span class="num" style="color:'+(isUnique?'#444':'#666')+'">'+(idx+1)+'</span>';
+    html+='<span class="bl" style="color:'+labelColor+'">'+item.n+'</span>';
+    html+='<div class="bar-wrap"><div class="bt" data-val="'+val+'">';
+    html+='<div class="bf" style="width:'+barW+'%;background:'+color+'"></div>';
+    html+='</div></div>';
+    html+='<span class="bpct" style="color:'+pctColor+'">'+fmt1(p)+'</span>';
+    html+='</div>';
+  });
+  var othPct=lothDecimal2?fmt2(pct(othVal,total)):fmt1(pct(othVal,total));
+  html+='<div class="oth"><div class="othtitle">Other\u00a0—\u00a0'+othPct+'</div></div>';
+  var el=document.getElementById(cid);
+  el.innerHTML=html;
+  el.querySelectorAll('.bt').forEach(function(bt){
+    bt.addEventListener('mouseenter',function(){
+      tip.innerHTML=fmtVal(parseFloat(bt.getAttribute('data-val')));
+      tip.style.display='block';
+    });
+    bt.addEventListener('mouseleave',function(){tip.style.display='none';});
+  });
+}
+
+function updateHighlight(){
+  var el=document.getElementById('hbox');
+  if(mode==='lots'){
+    var rTotal=sumArr(R)+Roth.lots;
+    var mSum=R.filter(function(i){return i.key;}).reduce(function(s,i){return s+i.lots;},0);
+    var p=pct(mSum,rTotal).toFixed(1)+'%';
+    el.innerHTML='<b>'+p+'</b> of direct above-threshold procurements by number of lots were previously conducted as negotiated procedures.';
+  } else {
+    el.innerHTML=
+      '<b>39.9%</b> of direct above-threshold procurements by contract value were previously conducted as negotiated procedures.<br>'+
+      '<b>70.2%</b> — excluding gas purchases within the Naftogaz group.';
+  }
+}
+
+function updateButtons(){
+  document.getElementById('b-lots').setAttribute('style',mode==='lots'?BON:BOFF);
+  document.getElementById('b-sum').setAttribute('style',mode==='sum'?BON:BOFF);
+}
+
+function render(){
+  drawBars('lbars',L,Loth,true);
+  drawBars('rbars',R,Roth,false);
+  updateHighlight();
+  updateButtons();
+}
+
+function sw(m){mode=m;render();}
+render();
+</script>
+</body>
+</html>
